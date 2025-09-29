@@ -22,9 +22,9 @@ Para a análise, foram utilizados dados oficiais de sinistros rodoviários dispo
 
 Como resultado, temos:
 
-- [Mapa interativo dos sinistros](https://yagoas.github.io/SinistrosPRF/assests/mapa_sinistros)
+- [Mapa interativo dos sinistros](https://yagoas.github.io/SinistrosPRF/assets/mapa_sinistros.html)
 - Dashboard no Power BI:
-  <!-- ![Dashboard Power BI](../assests/dashboard_powerbi) -->
+  <!-- ![Dashboard Power BI](../assets/dashboard_powerbi) -->
 
 
 ## 🏗️ Arquitetura do Projeto
@@ -70,7 +70,7 @@ O projeto utiliza os dados oficiais de **sinistros rodoviários** disponibilizad
 
 ```
 📦 SDB2 - Projeto/
-├── 📂 assests/                   # Repositório auxiliar 
+├── 📂 assets/                    # Repositório auxiliar
 ├── 📂 bronze/                    # Camada Bronze (Raw Data)
 │   ├── data/
 │   │   ├── acidentes2024_todas_causas_tipos.csv
