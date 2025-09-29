@@ -179,28 +179,28 @@ O projeto utiliza os dados oficiais de **sinistros rodoviários** disponibilizad
 <table>
   <tr>
     <td align="center">
+      <a href="https://github.com/USER">
+        <img style="border-radius: 50%;" src="https://github.com/USER.png" width="190px;" alt=""/>
+        <br /><sub><b>Jésus Gabriel Carvalho Ventura (21/1062956)</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/USER">
+        <img style="border-radius: 50%;" src="https://github.com/USER.png" width="190px;" alt=""/>
+        <br /><sub><b>Joel Soares Rangel (21/1039546)</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/valdersonjr">
+        <img style="border-radius: 50%;" src="https://github.com/valdersonjr.png" width="190px;" alt=""/>
+        <br /><sub><b>Valderson Pontes da Silva Junior (19/0020521)</b></sub>
+      </a>
+    </td>
+    <td align="center">
       <a href="https://github.com/Yagoas">
         <img style="border-radius: 50%;" src="https://github.com/Yagoas.png" width="190px;" alt=""/>
         <br /><sub><b>Yago Amin Santos (19/0101091)</b></sub>
       </a>
-    </td>
-    <td align="center">
-      <!-- <a href="https://github.com/USER">
-        <img style="border-radius: 50%;" src="https://github.com/Yagoas.png" width="190px;" alt=""/>
-        <br /><sub><b>NOME (MATRICULA)</b></sub> -->
-      </a>
-    </td>
-    <td align="center">
-      <!-- <a href="https://github.com/USER">
-        <img style="border-radius: 50%;" src="https://github.com/Yagoas.png" width="190px;" alt=""/>
-        <br /><sub><b>NOME (MATRICULA)</b></sub> -->
-      </a>
-    </td>
-    <td align="center">
-      <!-- <a href="https://github.com/USER">
-        <img style="border-radius: 50%;" src="https://github.com/Yagoas.png" width="190px;" alt=""/>
-        <br /><sub><b>NOME (MATRICULA)</b></sub>
-      </a> -->
     </td>
   </tr>
 </table>
