@@ -22,8 +22,8 @@ Para a análise, foram utilizados dados oficiais de sinistros rodoviários dispo
 
 Como resultado, temos:
 
-- [Mapa interativo dos sinistros](https://yagoas.github.io/SinistrosPRF/assets/mapa_sinistros.html)
-- Dashboard no Power BI:
+- [Mapa interativo dos sinistros do Centro-Oeste](https://yagoas.github.io/SinistrosPRF/assets/sinistros_centro_oeste.html) (O mapa completo está disponível em: /assets/mapa_sinistros.html)
+- Dashboard no Power BI: Em construção
   <!-- ![Dashboard Power BI](../assets/dashboard_powerbi) -->
 
 
