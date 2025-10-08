@@ -179,14 +179,14 @@ O projeto utiliza os dados oficiais de **sinistros rodoviários** disponibilizad
 <table>
   <tr>
     <td align="center">
-      <a href="https://github.com/USER">
-        <img style="border-radius: 50%;" src="https://github.com/USER.png" width="190px;" alt=""/>
+      <a href="https://github.com/xGabrielCv">
+        <img style="border-radius: 50%;" src="https://github.com/xGabrielCv.png" width="190px;" alt=""/>
         <br /><sub><b>Jésus Gabriel Carvalho Ventura (21/1062956)</b></sub>
       </a>
     </td>
     <td align="center">
-      <a href="https://github.com/USER">
-        <img style="border-radius: 50%;" src="https://github.com/USER.png" width="190px;" alt=""/>
+      <a href="https://github.com/JoelSRangel">
+        <img style="border-radius: 50%;" src="https://github.com/JoelSRangel.png" width="190px;" alt=""/>
         <br /><sub><b>Joel Soares Rangel (21/1039546)</b></sub>
       </a>
     </td>
