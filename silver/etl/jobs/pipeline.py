@@ -110,7 +110,7 @@ class SilverPipeline:
                     df = pd.read_csv(
                         file_path,
                         sep=",",
-                        encoding="latin-1",
+                        encoding="utf-8",
                     )
 
                 self.logger.info(
