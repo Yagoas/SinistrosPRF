@@ -149,6 +149,7 @@ SELECT
     uso_solo,
     dia_semana,
     periodo,
+    gravidade,
     MAX(ups) as ups_sinistro,
     -- Totalizadores únicos por sinistro
     MAX(ilesos) as total_ilesos,
@@ -164,7 +165,7 @@ WHERE sinistro_causa_principal = 'Sim'
 GROUP BY sinistro_id, data_hora, uf, localidade, regiao, municipio,
          rodovia, quilometro, latitude, longitude, sinistro_tipo, sinistro_causa,
          condicao_meteorologica, via_tipo, via_tracado, uso_solo, dia_semana,
-         periodo;
+         periodo, gravidade;
 
 -- View de pessoas envolvidas
 CREATE OR REPLACE VIEW sinistros.vw_silver_pessoas AS
@@ -198,16 +199,16 @@ SELECT
     localidade,
     regiao,
     COUNT(DISTINCT sinistro_id) as total_sinistros,
-    SUM(DISTINCT mortos) as total_mortos,
-    SUM(DISTINCT feridos) as total_feridos,
-    SUM(DISTINCT ilesos) as total_ilesos,
-    AVG(DISTINCT ups) as ups_medio,
+    SUM(total_mortos) as total_mortos,
+    SUM(total_feridos) as total_feridos,
+    SUM(total_ilesos) as total_ilesos,
+    SUM(ups_sinistro) as ups_sinistro,
     COUNT(DISTINCT CASE WHEN gravidade = 'Com morto' THEN sinistro_id END) as sinistros_com_morto,
     COUNT(DISTINCT CASE WHEN gravidade = 'Com ferido' THEN sinistro_id END) as sinistros_com_ferido,
     COUNT(DISTINCT CASE WHEN gravidade = 'Sem vítima' THEN sinistro_id END) as sinistros_sem_vitima
-FROM sinistros.tb_sinistros_silver
+FROM sinistros.vw_silver_sinistros_unicos
 GROUP BY uf, localidade, regiao
-ORDER BY total_sinistros DESC;
+ORDER BY ups_sinistro DESC;
 
 
 ------------------------------ FUNÇÕES AUXILIARES ------------------------------
@@ -244,14 +245,14 @@ $$ LANGUAGE plpgsql;
 
 COMMENT ON SCHEMA sinistros IS 'Schema principal para dados de sinistros da PRF - Camada Silver (Lakehouse)';
 
-COMMENT ON TABLE sinistros.tb_sinistros_silver IS 'Tabela única Silver Layer - Todos os dados de sinistros tratados e desnormalizados (estilo Lakehouse)';
+COMMENT ON TABLE sinistros.tb_sinistros_silver IS 'Tabela única Silver Layer - Todos os dados de sinistros tratados (estilo Lakehouse)';
 
 -- Comentários importantes sobre a abordagem
 COMMENT ON COLUMN sinistros.tb_sinistros_silver.sinistro_id IS 'ID do sinistro (pode repetir para múltiplos envolvidos/veículos)';
 COMMENT ON COLUMN sinistros.tb_sinistros_silver.id_envolvido IS 'ID da pessoa envolvida (NULL se registro representa apenas o sinistro)';
 COMMENT ON COLUMN sinistros.tb_sinistros_silver.veiculo_id IS 'ID do veículo envolvido (NULL se registro representa apenas o sinistro)';
 COMMENT ON COLUMN sinistros.tb_sinistros_silver.gravidade IS 'Calculado: Com morto, Com ferido, Sem vítima baseado nos totalizadores';
-COMMENT ON COLUMN sinistros.tb_sinistros_silver.ups IS 'Unidade Padrão de Severidade: 13=morto, 6=atropelamento, 4=ferido, 1=danos materiais';
+COMMENT ON COLUMN sinistros.tb_sinistros_silver.ups IS 'Unidade Padrão de Severidade: 13=morto, 6=atropelamento de pedestre, 4=ferido, 1=danos materiais';
 COMMENT ON COLUMN sinistros.tb_sinistros_silver.faixa_etaria_ano IS 'Faixa etária em anos: 0-9, 10-19, 20-29, etc.';
 COMMENT ON COLUMN sinistros.tb_sinistros_silver.faixa_etaria_classe IS 'Classificação conforme o ECA: Criança, Adolescente, Adulto, Idoso';
 
