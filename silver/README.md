@@ -65,6 +65,7 @@ psql -h localhost -p 5432 -U admin -d sinistros_prf
 ### Configuração Automática
 
 - **Versão**: PostgreSQL 15 Alpine
+- **Host name/address**: postgres (browser) / localhost (psql)
 - **Porta**: 5432
 - **Database**: sinistros_prf
 - **Usuário**: admin
