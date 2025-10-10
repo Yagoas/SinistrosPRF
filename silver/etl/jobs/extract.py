@@ -180,7 +180,7 @@ class DataSourceExtractor:
                         # Configurações de leitura do csv
                         df = pd.read_csv(
                             csv_content,
-                            sep=",",
+                            sep=";",
                             encoding="latin-1",
                             quotechar='"',
                             low_memory=False,
@@ -219,7 +219,7 @@ class DataSourceExtractor:
             output_path = self.bronze_path / filename
 
             with ProcessTimer(self.logger, f"Salvando {filename}"):
-                df.to_csv(output_path, index=False, encoding="latin-1")
+                df.to_csv(output_path, index=False, encoding="utf-8")
 
             # Verificar arquivo salvo
             if output_path.exists():
@@ -378,7 +378,7 @@ class DataSourceExtractor:
                 try:
                     df = pd.read_csv(file_path, nrows=0)  # Só cabeçalho
                     line_count = (
-                        sum(1 for _ in open(file_path, "r", encoding="latin-1")) - 1
+                        sum(1 for _ in open(file_path, "r", encoding="utf-8")) - 1
                     )
 
                     self.logger.info(f"{year}: {source['filename']}")
