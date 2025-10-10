@@ -205,36 +205,36 @@ Período: 2024-2025
 
 -- Estatísticas gerais por ano
 SELECT
-    EXTRACT(YEAR FROM data_inversa) as ano,
+    EXTRACT(YEAR FROM data) as ano,
     COUNT(*) as total_acidentes,
     SUM(mortos) as total_mortos,
     SUM(feridos) as total_feridos,
     ROUND(AVG(mortos::numeric), 2) as media_mortos_acidente
 FROM sinistros.tb_sinistros_silver
-GROUP BY EXTRACT(YEAR FROM data_inversa)
+GROUP BY EXTRACT(YEAR FROM data)
 ORDER BY ano;
 
 -- Top 10 trechos mais perigosos
 SELECT
     uf,
-    br,
+    rodovia,
     COUNT(*) as acidentes,
     SUM(mortos) as mortos,
     SUM(feridos) as feridos,
     ROUND((SUM(mortos) + SUM(feridos))::numeric / COUNT(*), 2) as vitimas_por_acidente
 FROM sinistros.tb_sinistros_silver
-GROUP BY uf, br
+GROUP BY uf, rodovia
 HAVING COUNT(*) >= 100  -- Mínimo 100 acidentes
 ORDER BY vitimas_por_acidente DESC, acidentes DESC
 LIMIT 10;
 
 -- Distribuição de acidentes por fase do dia
 SELECT
-    fase_dia,
+    periodo,
     COUNT(*) as acidentes,
     ROUND(COUNT(*)::numeric * 100 / SUM(COUNT(*)) OVER (), 1) as percentual
 FROM sinistros.tb_sinistros_silver
-GROUP BY fase_dia
+GROUP BY periodo
 ORDER BY acidentes DESC;
 
 -- Condições meteorológicas vs mortalidade
