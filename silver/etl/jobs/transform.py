@@ -530,7 +530,7 @@ class SilverDataTransformer:
                     mortos > 0,
                     13,
                     np.where(
-                        tipo_acidente == "Atropelamento", 6, np.where(feridos > 0, 4, 1)
+                        tipo_acidente.isin(["Atropelamento", "Atropelamento de Pedestre"]), 6, np.where(feridos > 0, 4, 1)
                     ),
                 )
                 df["ups"] = pd.Series(ups, index=df.index).astype("Int64")
