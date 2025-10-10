@@ -54,11 +54,12 @@ ENV PATH=/usr/src/.venv/bin:$PATH \
 
 WORKDIR /project
 
-# Script de entrada
-COPY docker_entrypoint.sh /usr/src/entrypoint.sh
-RUN chmod +x /usr/src/entrypoint.sh
+# Copiar script de entrada Python
+COPY docker_entrypoint.py /usr/src/entrypoint.py
+RUN chmod +x /usr/src/entrypoint.py
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import sys; sys.exit(0)"
 
-CMD ["/usr/src/entrypoint.sh"]
+# Usar Python como entrypoint
+ENTRYPOINT ["python", "/usr/src/entrypoint.py"]

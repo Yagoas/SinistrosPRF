@@ -31,21 +31,21 @@ help: ## Mostrar esta ajuda
 	@echo ""
 
 check: ## Verificar se Docker está rodando
-	@docker info >nul 2>&1 || (echo "Docker não está rodando!" && exit 1)
+	@docker info >/dev/null 2>&1 || docker info >nul 2>&1 || (echo "Docker não está rodando!" && exit 1)
 	@echo "Docker está rodando"
 
 setup: check ## Setup completo - primeira execução
 	@echo "SETUP COMPLETO - PRIMEIRA VEZ"
 	@echo "================================="
 	@echo "1. Limpando containers antigos..."
-	-@docker compose -f $(COMPOSE) down -v >nul 2>&1
+	-@docker compose -f $(COMPOSE) down -v 2>/dev/null || docker compose -f $(COMPOSE) down -v 2>nul || true
 	@echo "2. Construindo imagens..."
 	@docker compose -f $(COMPOSE) build
 	@echo "3. Iniciando PostgreSQL + pgAdmin..."
 	@docker compose -f $(COMPOSE) up -d postgres pgadmin
 	@echo "4. Aguardando PostgreSQL ficar pronto..."
-	@timeout /t 10 >nul
-	@echo "5. Executando ETL Pipeline..."
+	
+	@echo "5. Executando ETL dos dados para o lakehouse..."
 	@docker compose -f $(COMPOSE) --profile setup up etl_setup
 	@echo ""
 	@echo "Setup concluído!"
@@ -65,7 +65,7 @@ start: check ## Iniciar apenas banco + interface (dados existentes)
 stop: ## Parar todos os serviços
 	@echo "PARANDO SERVIÇOS"
 	@echo "==================="
-	-@docker compose -f $(COMPOSE) down >nul 2>&1
+	-@docker compose -f $(COMPOSE) down 2>/dev/null || docker compose -f $(COMPOSE) down 2>nul || true
 	@echo "Todos os serviços foram parados!"
 
 restart: stop start ## Reiniciar serviços
@@ -74,7 +74,7 @@ etl: check ## Executar apenas ETL Pipeline
 	@echo "EXECUTANDO APENAS ETL"
 	@echo "========================"
 	@echo "Verificando se PostgreSQL está rodando..."
-	@docker ps --filter "name=sinistros_postgres" --filter "status=running" | findstr sinistros_postgres >nul || (echo "❌ PostgreSQL não está rodando! Use 'make start' primeiro." && exit 1)
+	@docker compose -f $(COMPOSE) ps postgres | grep -q "Up" || docker compose -f $(COMPOSE) ps postgres | findstr "Up" || (echo "❌ PostgreSQL não está rodando! Use 'make start' primeiro." && exit 1)
 	@echo "Processando dados para o lakehouse..."
 	@docker compose -f $(COMPOSE) --profile setup up etl_setup
 
@@ -86,7 +86,7 @@ build: check ## Build imagens
 logs: ## Ver logs dos containers
 	@echo "LOGS DOS CONTAINERS"
 	@echo "======================"
-	@docker ps --filter "name=sinistros" --format "{{.Names}}" | findstr sinistros >nul && docker compose -f $(COMPOSE) logs -f || echo "❌ Nenhum container está rodando!"
+	@docker compose -f $(COMPOSE) logs -f 2>/dev/null || docker compose -f $(COMPOSE) logs -f 2>nul || echo "❌ Nenhum container está rodando!"
 
 status: ## Status dos containers
 	@echo "STATUS DOS CONTAINERS"
@@ -97,14 +97,14 @@ clean: ## Limpeza completa (REMOVE TODOS OS DADOS!)
 	@echo "LIMPEZA COMPLETA"
 	@echo "=================="
 	@echo "ATENÇÃO: Isso vai deletar TODOS os dados!"
-	@echo "Removendo containers e volumes..." 
-	-@docker compose -f $(COMPOSE) down -v >nul 2>&1
-	-@docker container rm sinistros_etl_setup >nul 2>&1
-	-@docker volume rm sinistros_postgres_data >nul 2>&1
-	-@docker volume rm sinistros_pgadmin_data >nul 2>&1
-	-@docker volume rm sinistros_etl_logs >nul 2>&1
-	-@docker volume rm sinistros_etl_data >nul 2>&1
-	-@docker image rm sdb2-projeto-etl_setup >nul 2>&1
+	@echo "Removendo containers, volumes e imagens..."
+	-@docker compose -f $(COMPOSE) down -v 2>/dev/null || docker compose -f $(COMPOSE) down -v 2>nul || true
+	-@docker container rm sinistros_etl_setup 2>/dev/null || docker container rm sinistros_etl_setup 2>nul || true
+	-@docker volume rm sinistros_postgres_data 2>/dev/null || docker volume rm sinistros_postgres_data 2>nul || true
+	-@docker volume rm sinistros_pgadmin_data 2>/dev/null || docker volume rm sinistros_pgadmin_data 2>nul || true
+	-@docker volume rm sinistros_etl_logs 2>/dev/null || docker volume rm sinistros_etl_logs 2>nul || true
+	-@docker volume rm sinistros_etl_data 2>/dev/null || docker volume rm sinistros_etl_data 2>nul || true
+	-@docker image rm sdb2-projeto-etl_setup 2>/dev/null || docker image rm sdb2-projeto-etl_setup 2>nul || true
 	@echo "Limpeza concluída!"
 	
 
