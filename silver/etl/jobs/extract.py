@@ -219,7 +219,7 @@ class DataSourceExtractor:
             output_path = self.bronze_path / filename
 
             with ProcessTimer(self.logger, f"Salvando {filename}"):
-                df.to_csv(output_path, index=False, encoding="utf-8")
+                df.to_csv(output_path, index=False, encoding="latin-1")
 
             # Verificar arquivo salvo
             if output_path.exists():
