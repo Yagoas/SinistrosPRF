@@ -16,7 +16,7 @@
 
 Este projeto foi desenvolvido para a disciplina **SDB2 (Sistemas de Banco de Dados 2)** da **Universidade de Brasília (UnB)**, com o objetivo de realizar uma análise exploratória e estatística dos dados de sinistralidade nas rodovias federais brasileiras, utilizando a **arquitetura Medallion** para processamento e análise de dados.
 
-Para a análise, foram utilizados dados oficiais de sinistros rodoviários disponibilizados pela **Polícia Rodoviária Federal (PRF)**, abrangendo os anos de 2024 e 2025, totalizando aproximadamente 980 mil registros. O projeto envolve desde o tratamento inicial dos dados brutos até a criação de um data warehouse em modelo star schema, além da visualização dos resultados por meio de dashboards interativos no Power BI.
+Para a análise, foram utilizados dados oficiais de sinistros rodoviários disponibilizados pela [**Polícia Rodoviária Federal (PRF)**](https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf), abrangendo os anos de 2024 e 2025, totalizando aproximadamente 980 mil registros. O projeto envolve desde o tratamento inicial dos dados brutos até a criação de um data warehouse em modelo star schema, além da visualização dos resultados por meio de dashboards interativos no Power BI.
 
 É possível visualizar as etapas do projeto, desde a ingestão dos dados brutos (Bronze Layer), passando pela limpeza e transformação (Silver Layer), até a modelagem dimensional e análise final (Gold Layer).
 
@@ -41,11 +41,9 @@ O projeto segue a **arquitetura Medallion** com três camadas principais:
 - **PostgreSQL containerizado** como banco de dados
 - **Jobs ETL automatizados** para ingestão e transformação
 - Modelagem relacional com MER, DER, DLD e DDL
-- Camada de qualidade e governança de dados
 
 ### 🥇 **Gold Layer (Data Warehouse)**
 - **Modelo Star Schema** para análise dimensional
-- Exportação em arquivos CSV otimizados
 - Documentação completa (MER, DER, DLD, DDL)
 - Dados agregados e prontos para visualização
 
@@ -78,12 +76,20 @@ O projeto utiliza os dados oficiais de **sinistros rodoviários** disponibilizad
 │   └── README.md
 ├── 📂 silver/                    # Camada Silver (Lakehouse)
 │   ├── database/
-│   │   ├── docker-compose.yml
 │   │   ├── init.sql
-│   │   └── Dockerfile
 │   ├── etl/
+│   │   ├── data/
+│   │   │   └── acidentes2024_todas_causas_tipos.csv
 │   │   ├── jobs/
-│   │   └── scripts/
+│   │   │   ├── extract.py
+│   │   │   ├── load.py
+│   │   │   ├── pipeline.py
+│   │   │   └── transform.py
+│   │   ├── scripts/
+│   │   └── utils/
+│   │       ├── _init_.py
+│   │       ├── database.py
+│   │       └── logging_utils.py
 │   ├── models/
 │   │   ├── MER/
 │   │   ├── DER/
@@ -92,26 +98,22 @@ O projeto utiliza os dados oficiais de **sinistros rodoviários** disponibilizad
 │   └── README.md
 ├── 📂 gold/                      # Camada Gold (Data Warehouse)
 │   ├── data/
-│   │   ├── dim_tempo.csv
-│   │   ├── dim_localizacao.csv
-│   │   ├── dim_pessoa.csv
-│   │   ├── dim_veiculo.csv
-│   │   └── fato_sinistros.csv
 │   ├── models/
-│   │   ├── MER/
-│   │   ├── DER/
-│   │   ├── DLD/
-│   │   └── DDL/
 │   └── README.md
 ├── 📂 visualization/             # Visualizações
 │   ├── powerbi/
 │   │   └── dashboard_sinistros.pbix
 │   └── reports/
 ├── 📂 notebooks/                 # Análises exploratórias
-│   └── exploratory_analysis.ipynb
-├── 📂 config/                    # Configurações
-│   ├── database.env
-│   └── etl_config.yaml
+│   └── analise_raw.ipynb
+│   └── tratamento_raw.ipynb
+│   └── mapa.ipynb
+├── 📄 .gitattributes
+├── 📄 .gitignore
+├── 📄 compose.yml
+├── 📄 docker_entrypoint.sh
+├── 📄 Dockerfile
+├── 📄 Makefile
 └── 📄 README.md
 ```
 
@@ -128,8 +130,10 @@ O projeto utiliza os dados oficiais de **sinistros rodoviários** disponibilizad
 ### **Camada Silver (Lakehouse)**
 - **PostgreSQL** - Banco de dados relacional
 - **Docker & Docker Compose** - Containerização
-- **?** Orquestração de jobs ETL
-- **?** - ORM para interação com o banco
+- **Makefile** - Automação de tarefas
+- **Psycopg2** - Driver PostgreSQL para Python
+- **SQLAlchemy** - ORM para PostgreSQL
+- **Pandas** - Manipulação e análise de dados
 
 ### **Camada Gold (Data Warehouse)**
 - **Star Schema** - Modelagem dimensional
@@ -154,10 +158,20 @@ O projeto utiliza os dados oficiais de **sinistros rodoviários** disponibilizad
 ## 🚀 Como Executar
 
 1. **Clone o repositório**
-2. **Configure o ambiente Silver** (PostgreSQL + Docker)
-3. **Execute os jobs ETL** para popular o Lakehouse
+```bash
+git clone https://github.com/Yagoas/SinistrosPRF.git
+cd SDB2-Projeto
+```
+
+2. **Configure o ambiente Silver e Roda jobs ETL** (PostgreSQL + Docker)
+```bash
+make setup
+```
+
 4. **Gere a camada Gold** com modelo Star Schema
+
 5. **Conecte o Power BI** aos dados da Gold Layer
+
 6. **Visualize os dashboards** e extraia insights
 
 ## 📈 Resultados Esperados

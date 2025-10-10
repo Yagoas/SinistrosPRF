@@ -1,0 +1,84 @@
+# DOCKER COMPOSE - SETUP COMPLETO
+version: "3.8"
+
+services:
+  # 🐘 PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: sinistros_postgres
+    environment:
+      POSTGRES_DB: sinistros_prf
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./silver/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - sinistros_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d sinistros_prf"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # 🕸️ pgAdmin (Interface Web)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: sinistros_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@sinistros.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    ports:
+      - "8080:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - sinistros_net
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+  # 🐍 ETL Pipeline (Setup Inicial)
+  etl_setup:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sinistros_etl_setup
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: sinistros_prf
+      DB_USER: admin
+      DB_PASSWORD: admin123
+      PYTHONPATH: /usr/src/silver
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - sinistros_net
+    volumes:
+      - etl_logs:/usr/src/silver/logs
+      - etl_data:/usr/src/silver/data
+      - ./silver/etl/data:/usr/src/silver/etl/data
+      - ./bronze:/usr/src/bronze
+    restart: "no"
+    profiles:
+      - setup
+
+networks:
+  sinistros_net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    name: sinistros_postgres_data
+  pgadmin_data:
+    name: sinistros_pgadmin_data
+  etl_logs:
+    name: sinistros_etl_logs
+  etl_data:
+    name: sinistros_etl_data
