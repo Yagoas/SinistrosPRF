@@ -180,7 +180,7 @@ class DataSourceExtractor:
                         # Configurações de leitura do csv
                         df = pd.read_csv(
                             csv_content,
-                            sep=";",
+                            sep=",",
                             encoding="latin-1",
                             quotechar='"',
                             low_memory=False,
