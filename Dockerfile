@@ -20,15 +20,15 @@ RUN pip install -r requirements.txt
 
 
 # Copiar código fonte
-COPY bronze/ /usr/src/bronze/
-COPY silver/etl/ /usr/src/silver/etl/
-COPY silver/database/init.sql /usr/src/silver/database/init.sql
+COPY data_layer/bronze/ /usr/src/data_layer/bronze/
+COPY data_layer/silver/etl/ /usr/src/data_layer/silver/etl/
+COPY data_layer/silver/database/init.sql /usr/src/data_layer/silver/database/init.sql
 
 # Criar diretórios necessários
-RUN mkdir -p /usr/src/silver/data
+RUN mkdir -p /usr/src/data_layer/silver/data
 
 # Definir PYTHONPATH
-ENV PYTHONPATH=/usr/src/silver
+ENV PYTHONPATH=/usr/src/data_layer/silver
 
 # runtime
 FROM python:3.12.3-slim AS runtime
@@ -37,8 +37,8 @@ FROM python:3.12.3-slim AS runtime
 COPY --from=builder /usr/src/.venv/ /usr/src/.venv/
 
 # Copiar arquivos fonte do builder
-COPY --from=builder /usr/src/bronze/ /usr/src/bronze/
-COPY --from=builder /usr/src/silver/ /usr/src/silver/
+COPY --from=builder /usr/src/data_layer/bronze/ /usr/src/data_layer/bronze/
+COPY --from=builder /usr/src/data_layer/silver/ /usr/src/data_layer/silver/
 
 # Instalar dependências do sistema para PostgreSQL
 RUN apt-get update && \
@@ -50,7 +50,7 @@ RUN apt-get update && \
 ENV PATH=/usr/src/.venv/bin:$PATH \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PYTHONPATH=/usr/src/silver
+    PYTHONPATH=/usr/src/data_layer/silver
 
 WORKDIR /project
 
