@@ -9,6 +9,7 @@ import pandas as pd
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 
+
 class DatabaseConfig:
     """Configurações do banco de dados"""
 
@@ -112,7 +113,7 @@ class DatabaseManager:
         self,
         df: pd.DataFrame,
         table_name: str,
-        schema: str = "sinistros",
+        schema: str = "silver",
         if_exists: str = "append",
         chunksize: int = 1000,
     ) -> int:
@@ -134,7 +135,7 @@ class DatabaseManager:
             self.logger.error(f"Erro ao inserir DataFrame: {e}")
             raise
 
-    def get_table_count(self, table_name: str, schema: str = "sinistros") -> int:
+    def get_table_count(self, table_name: str, schema: str = "silver") -> int:
         """Retorna quantidade de registros na tabela"""
         try:
             query = f"SELECT COUNT(*) as count FROM {schema}.{table_name}"
@@ -146,7 +147,7 @@ class DatabaseManager:
             self.logger.error(f"Erro ao contar registros: {e}")
             return 0
 
-    def truncate_table(self, table_name: str, schema: str = "sinistros") -> bool:
+    def truncate_table(self, table_name: str, schema: str = "silver") -> bool:
         """Limpa todos os dados da tabela"""
         try:
             sql = f"TRUNCATE TABLE {schema}.{table_name} RESTART IDENTITY CASCADE"

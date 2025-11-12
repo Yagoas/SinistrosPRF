@@ -27,7 +27,7 @@ class SilverLakehouseLoader:
 
         # Nome da tabela única
         self.table_name = "tb_sinistros_silver"
-        self.schema_name = "sinistros"
+        self.schema_name = "silver"
 
         # Verificar conexão
         if not self.db.test_connection():

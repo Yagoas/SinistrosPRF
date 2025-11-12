@@ -4,7 +4,7 @@
 SET timezone = 'America/Sao_Paulo';
 
 -- Criação do schema
-CREATE SCHEMA IF NOT EXISTS sinistros;
+CREATE SCHEMA IF NOT EXISTS silver;
 
 -- Extensões necessárias
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -14,10 +14,10 @@ CREATE EXTENSION IF NOT EXISTS "pg_stat_statements";
 ------------------------------ TABELA SILVER LAYER - LAKEHOUSE --------------------------------
 
 -- Drop da tabela se existir
-DROP TABLE IF EXISTS sinistros.tb_sinistros_silver CASCADE;
+DROP TABLE IF EXISTS silver.tb_sinistros_silver CASCADE;
 
 -- Tabela única com TODOS os dados tratados
-CREATE TABLE sinistros.tb_sinistros_silver (
+CREATE TABLE silver.tb_sinistros_silver (
     -- IDENTIFICADORES PRIMÁRIOS
     sinistro_id BIGINT NOT NULL,
     id_envolvido BIGINT,
@@ -92,44 +92,44 @@ CREATE TABLE sinistros.tb_sinistros_silver (
 ------------------------------ ÍNDICES PARA PERFORMANCE ------------------------------
 
 -- Índice primário composto (sinistro + envolvido + veículo)
-CREATE INDEX idx_silver_pk ON sinistros.tb_sinistros_silver(sinistro_id, id_envolvido, veiculo_id);
+CREATE INDEX idx_silver_pk ON silver.tb_sinistros_silver(sinistro_id, id_envolvido, veiculo_id);
 
 -- Índices temporais
-CREATE INDEX idx_silver_data ON sinistros.tb_sinistros_silver(data);
-CREATE INDEX idx_silver_ano ON sinistros.tb_sinistros_silver(ano);
-CREATE INDEX idx_silver_periodo ON sinistros.tb_sinistros_silver(periodo);
-CREATE INDEX idx_silver_dia_semana ON sinistros.tb_sinistros_silver(dia_semana);
+CREATE INDEX idx_silver_data ON silver.tb_sinistros_silver(data);
+CREATE INDEX idx_silver_ano ON silver.tb_sinistros_silver(ano);
+CREATE INDEX idx_silver_periodo ON silver.tb_sinistros_silver(periodo);
+CREATE INDEX idx_silver_dia_semana ON silver.tb_sinistros_silver(dia_semana);
 
 -- Índices geográficos
-CREATE INDEX idx_silver_uf ON sinistros.tb_sinistros_silver(uf);
-CREATE INDEX idx_silver_localidade ON sinistros.tb_sinistros_silver(localidade);
-CREATE INDEX idx_silver_regiao ON sinistros.tb_sinistros_silver(regiao);
-CREATE INDEX idx_silver_municipio ON sinistros.tb_sinistros_silver(municipio);
-CREATE INDEX idx_silver_rodovia ON sinistros.tb_sinistros_silver(rodovia);
+CREATE INDEX idx_silver_uf ON silver.tb_sinistros_silver(uf);
+CREATE INDEX idx_silver_localidade ON silver.tb_sinistros_silver(localidade);
+CREATE INDEX idx_silver_regiao ON silver.tb_sinistros_silver(regiao);
+CREATE INDEX idx_silver_municipio ON silver.tb_sinistros_silver(municipio);
+CREATE INDEX idx_silver_rodovia ON silver.tb_sinistros_silver(rodovia);
 
 -- Índices de análise
-CREATE INDEX idx_silver_gravidade ON sinistros.tb_sinistros_silver(gravidade);
-CREATE INDEX idx_silver_tipo ON sinistros.tb_sinistros_silver(sinistro_tipo);
-CREATE INDEX idx_silver_causa ON sinistros.tb_sinistros_silver(sinistro_causa);
-CREATE INDEX idx_silver_ups ON sinistros.tb_sinistros_silver(ups);
+CREATE INDEX idx_silver_gravidade ON silver.tb_sinistros_silver(gravidade);
+CREATE INDEX idx_silver_tipo ON silver.tb_sinistros_silver(sinistro_tipo);
+CREATE INDEX idx_silver_causa ON silver.tb_sinistros_silver(sinistro_causa);
+CREATE INDEX idx_silver_ups ON silver.tb_sinistros_silver(ups);
 
 -- Índices demográficos
-CREATE INDEX idx_silver_idade ON sinistros.tb_sinistros_silver(envolvido_idade);
-CREATE INDEX idx_silver_sexo ON sinistros.tb_sinistros_silver(envolvido_sexo);
-CREATE INDEX idx_silver_faixa_etaria ON sinistros.tb_sinistros_silver(faixa_etaria_classe);
+CREATE INDEX idx_silver_idade ON silver.tb_sinistros_silver(envolvido_idade);
+CREATE INDEX idx_silver_sexo ON silver.tb_sinistros_silver(envolvido_sexo);
+CREATE INDEX idx_silver_faixa_etaria ON silver.tb_sinistros_silver(faixa_etaria_classe);
 
 -- Índices de veículos
-CREATE INDEX idx_silver_veiculo_tipo ON sinistros.tb_sinistros_silver(veiculo_tipo);
-CREATE INDEX idx_silver_veiculo_ano ON sinistros.tb_sinistros_silver(veiculo_ano_fabricacao);
+CREATE INDEX idx_silver_veiculo_tipo ON silver.tb_sinistros_silver(veiculo_tipo);
+CREATE INDEX idx_silver_veiculo_ano ON silver.tb_sinistros_silver(veiculo_ano_fabricacao);
 
 -- Índice geoespacial
-CREATE INDEX idx_silver_location ON sinistros.tb_sinistros_silver USING btree(latitude, longitude);
+CREATE INDEX idx_silver_location ON silver.tb_sinistros_silver USING btree(latitude, longitude);
 
 
 ------------------------------ VIEWS ÚTEIS PARA ANÁLISE ------------------------------
 
 -- View de sinistros únicos (agregando os envolvidos)
-CREATE OR REPLACE VIEW sinistros.vw_silver_sinistros_unicos AS
+CREATE OR REPLACE VIEW silver.vw_silver_sinistros_unicos AS
 SELECT 
     sinistro_id,
     data_hora,
@@ -160,7 +160,7 @@ SELECT
     -- Contadores de envolvidos
     COUNT(DISTINCT id_envolvido) FILTER (WHERE id_envolvido IS NOT NULL) as total_pessoas_envolvidas,
     COUNT(DISTINCT veiculo_id) FILTER (WHERE veiculo_id IS NOT NULL) as total_veiculos_envolvidos
-FROM sinistros.tb_sinistros_silver
+FROM silver.tb_sinistros_silver
 WHERE sinistro_causa_principal = 'Sim'
 GROUP BY sinistro_id, data_hora, uf, localidade, regiao, municipio,
          rodovia, quilometro, latitude, longitude, sinistro_tipo, sinistro_causa,
@@ -168,7 +168,7 @@ GROUP BY sinistro_id, data_hora, uf, localidade, regiao, municipio,
          periodo, gravidade;
 
 -- View de pessoas envolvidas
-CREATE OR REPLACE VIEW sinistros.vw_silver_pessoas AS
+CREATE OR REPLACE VIEW silver.vw_silver_pessoas AS
 SELECT DISTINCT
     sinistro_id,
     id_envolvido,
@@ -178,22 +178,22 @@ SELECT DISTINCT
     estado_fisico,
     faixa_etaria_ano,
     faixa_etaria_classe
-FROM sinistros.tb_sinistros_silver
+FROM silver.tb_sinistros_silver
 WHERE id_envolvido IS NOT NULL;
 
 -- View de veículos envolvidos
-CREATE OR REPLACE VIEW sinistros.vw_silver_veiculos AS
+CREATE OR REPLACE VIEW silver.vw_silver_veiculos AS
 SELECT DISTINCT
     sinistro_id,
     veiculo_id,
     veiculo_tipo,
     veiculo_marca_modelo,
     veiculo_ano_fabricacao
-FROM sinistros.tb_sinistros_silver
+FROM silver.tb_sinistros_silver
 WHERE veiculo_id IS NOT NULL;
 
 -- View de estatísticas por UF
-CREATE OR REPLACE VIEW sinistros.vw_silver_estatisticas_uf AS
+CREATE OR REPLACE VIEW silver.vw_silver_estatisticas_uf AS
 SELECT 
     uf,
     localidade,
@@ -206,7 +206,7 @@ SELECT
     COUNT(DISTINCT CASE WHEN gravidade = 'Com morto' THEN sinistro_id END) as sinistros_com_morto,
     COUNT(DISTINCT CASE WHEN gravidade = 'Com ferido' THEN sinistro_id END) as sinistros_com_ferido,
     COUNT(DISTINCT CASE WHEN gravidade = 'Sem vítima' THEN sinistro_id END) as sinistros_sem_vitima
-FROM sinistros.vw_silver_sinistros_unicos
+FROM silver.vw_silver_sinistros_unicos
 GROUP BY uf, localidade, regiao
 ORDER BY ups_sinistro DESC;
 
@@ -236,25 +236,25 @@ BEGIN
         MAX(data) as periodo_dados_fim,
         COUNT(DISTINCT uf) as ufs_distintas,
         COUNT(DISTINCT municipio) as municipios_distintos
-    FROM sinistros.tb_sinistros_silver;
+    FROM silver.tb_sinistros_silver;
 END;
 $$ LANGUAGE plpgsql;
 
 
 ------------------------------ COMENTÁRIOS NAS TABELAS ------------------------------
 
-COMMENT ON SCHEMA sinistros IS 'Schema principal para dados de sinistros da PRF - Camada Silver (Lakehouse)';
+COMMENT ON SCHEMA silver IS 'Schema para dados de sinistros da PRF - Camada Silver (Lakehouse)';
 
-COMMENT ON TABLE sinistros.tb_sinistros_silver IS 'Tabela única Silver Layer - Todos os dados de sinistros tratados (estilo Lakehouse)';
+COMMENT ON TABLE silver.tb_sinistros_silver IS 'Tabela única Silver Layer - Todos os dados de sinistros tratados (estilo Lakehouse)';
 
 -- Comentários importantes sobre a abordagem
-COMMENT ON COLUMN sinistros.tb_sinistros_silver.sinistro_id IS 'ID do sinistro (pode repetir para múltiplos envolvidos/veículos)';
-COMMENT ON COLUMN sinistros.tb_sinistros_silver.id_envolvido IS 'ID da pessoa envolvida (NULL se registro representa apenas o sinistro)';
-COMMENT ON COLUMN sinistros.tb_sinistros_silver.veiculo_id IS 'ID do veículo envolvido (NULL se registro representa apenas o sinistro)';
-COMMENT ON COLUMN sinistros.tb_sinistros_silver.gravidade IS 'Calculado: Com morto, Com ferido, Sem vítima baseado nos totalizadores';
-COMMENT ON COLUMN sinistros.tb_sinistros_silver.ups IS 'Unidade Padrão de Severidade: 13=morto, 6=atropelamento de pedestre, 4=ferido, 1=danos materiais';
-COMMENT ON COLUMN sinistros.tb_sinistros_silver.faixa_etaria_ano IS 'Faixa etária em anos: 0-9, 10-19, 20-29, etc.';
-COMMENT ON COLUMN sinistros.tb_sinistros_silver.faixa_etaria_classe IS 'Classificação conforme o ECA: Criança, Adolescente, Adulto, Idoso';
+COMMENT ON COLUMN silver.tb_sinistros_silver.sinistro_id IS 'ID do sinistro (pode repetir para múltiplos envolvidos/veículos)';
+COMMENT ON COLUMN silver.tb_sinistros_silver.id_envolvido IS 'ID da pessoa envolvida (NULL se registro representa apenas o sinistro)';
+COMMENT ON COLUMN silver.tb_sinistros_silver.veiculo_id IS 'ID do veículo envolvido (NULL se registro representa apenas o sinistro)';
+COMMENT ON COLUMN silver.tb_sinistros_silver.gravidade IS 'Calculado: Com morto, Com ferido, Sem vítima baseado nos totalizadores';
+COMMENT ON COLUMN silver.tb_sinistros_silver.ups IS 'Unidade Padrão de Severidade: 13=morto, 6=atropelamento de pedestre, 4=ferido, 1=danos materiais';
+COMMENT ON COLUMN silver.tb_sinistros_silver.faixa_etaria_ano IS 'Faixa etária em anos: 0-9, 10-19, 20-29, etc.';
+COMMENT ON COLUMN silver.tb_sinistros_silver.faixa_etaria_classe IS 'Classificação conforme o ECA: Criança, Adolescente, Adulto, Idoso';
 
 
 -- Finalização
