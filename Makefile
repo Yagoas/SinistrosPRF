@@ -14,15 +14,18 @@ help: ## Mostrar esta ajuda
 	@echo "=================================="
 	@echo ""
 	@echo "COMANDOS PRINCIPAIS:"
-	@echo "  make setup     - Setup completo (primeira vez)"
-	@echo "  make start     - Iniciar banco + interface"
-	@echo "  make stop      - Parar todos containers"
-	@echo "  make restart   - Reiniciar serviços"
-	@echo "  make etl       - Executar apenas ETL"
-	@echo "  make logs      - Ver logs dos containers"
-	@echo "  make status    - Status dos containers"
-	@echo "  make clean     - Limpar tudo (cuidado!)"
-	@echo "  make build     - Build imagens"
+	@echo "  make setup       - Setup completo (primeira vez)"
+	@echo "  make db          - Subir apenas banco + pgAdmin"
+	@echo "  make etl-silver  - Executar ETL Silver (Bronze → Silver)"
+	@echo "  make etl-gold    - Executar ETL Gold (Silver → DW)"
+	@echo "  make etl-full    - Executar ETL completo (Silver + Gold)"
+	@echo "  make start       - Iniciar banco + interface"
+	@echo "  make stop        - Parar todos containers"
+	@echo "  make restart     - Reiniciar serviços"
+	@echo "  make logs        - Ver logs dos containers"
+	@echo "  make status      - Status dos containers"
+	@echo "  make clean       - Limpar tudo (cuidado!)"
+	@echo "  make build       - Build imagens"
 	@echo ""
 	@echo "ACESSO:"
 	@echo "  PostgreSQL: localhost:5432"
@@ -54,6 +57,45 @@ setup: check ## Setup completo - primeira execução
 	@echo "pgAdmin: http://localhost:8080"
 	@echo "PostgreSQL: localhost:5432"
 
+db: check ## Subir apenas PostgreSQL + pgAdmin (cria se não existir)
+	@echo "INICIANDO BANCO DE DADOS"
+	@echo "=========================="
+	@docker compose -f $(COMPOSE) up -d postgres pgadmin
+	@echo ""
+	@echo "Banco de dados iniciado!"
+	@echo "pgAdmin: http://localhost:8080"
+	@echo "PostgreSQL: localhost:5432"
+
+etl-silver: check ## Executar apenas ETL Silver (Bronze → Silver)
+	@echo "ETL SILVER: Bronze → Silver"
+	@echo "=============================="
+	@echo "Verificando se PostgreSQL está rodando..."
+	@docker ps --filter "name=sinistros_postgres" --filter "status=running" -q >nul 2>&1 || (echo "❌ PostgreSQL não está rodando! Use 'make db' primeiro." && exit 1)
+	@echo "Executando ETL Silver..."
+	@docker compose -f $(COMPOSE) run --rm -e PYTHONPATH=/app/data_layer/silver --entrypoint "" etl_setup sh -c "cd /app/data_layer/silver && python etl/jobs/pipeline.py"
+	@echo ""
+	@echo "✅ ETL Silver concluído!"
+
+etl-gold: check ## Executar apenas ETL Gold (Silver → DW)
+	@echo "ETL GOLD: Silver → Data Warehouse"
+	@echo "===================================="
+	@echo "Verificando se PostgreSQL está rodando..."
+	@docker ps --filter "name=sinistros_postgres" --filter "status=running" -q >nul 2>&1 || (echo "❌ PostgreSQL não está rodando! Use 'make db' primeiro." && exit 1)
+	@echo "Executando ETL Gold..."
+	@docker compose -f $(COMPOSE) run --rm -e PYTHONPATH=/app/data_layer/gold --entrypoint "" etl_setup sh -c "cd /app/data_layer/gold && python etl/jobs/pipeline.py"
+	@echo ""
+	@echo "✅ ETL Gold concluído!"
+
+etl-full: check ## Executar ETL completo (Silver + Gold)
+	@echo "ETL COMPLETO: Bronze → Silver → DW"
+	@echo "====================================="
+	@echo "Verificando se PostgreSQL está rodando..."
+	@docker ps --filter "name=sinistros_postgres" --filter "status=running" -q >nul 2>&1 || (echo "❌ PostgreSQL não está rodando! Use 'make db' primeiro." && exit 1)
+	@echo "Executando pipeline completo..."
+	@docker compose -f $(COMPOSE) --profile setup up etl_setup
+	@echo ""
+	@echo "✅ ETL completo concluído!"
+
 start: check ## Iniciar apenas banco + interface (dados existentes)
 	@echo "INICIANDO SERVIÇOS"
 	@echo "====================="
@@ -72,15 +114,7 @@ stop: ## Parar todos os serviços
 
 restart: stop start ## Reiniciar serviços
 
-etl: check ## Executar apenas ETL Pipeline
-	@echo "EXECUTANDO APENAS ETL"
-	@echo "========================"
-	@echo "Verificando se PostgreSQL está rodando..."
-	@docker compose -f $(COMPOSE) ps postgres | grep -q "Up" || docker compose -f $(COMPOSE) ps postgres | findstr "Up" || (echo "❌ PostgreSQL não está rodando! Use 'make start' primeiro." && exit 1)
-	@echo "Processando dados para o lakehouse..."
-	@docker compose -f $(COMPOSE) --profile setup up etl_setup
-
-build: check ## Build imagens
+# Comandos de manutenção
 	@echo "CONSTRUINDO IMAGENS"
 	@echo "====================="
 	@docker compose -f $(COMPOSE) build
@@ -113,6 +147,11 @@ clean: ## Limpeza completa (REMOVE TODOS OS DADOS!)
 	
 
 # Comandos de manutenção
+build: check ## Build imagens
+	@echo "CONSTRUINDO IMAGENS"
+	@echo "====================="
+	@docker compose -f $(COMPOSE) build
+
 rebuild: clean setup ## Rebuild completo do zero
 
 update: ## Atualizar imagens Docker

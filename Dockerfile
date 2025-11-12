@@ -23,6 +23,7 @@ RUN pip install -r requirements.txt
 COPY data_layer/bronze/ /app/data_layer/bronze/
 COPY data_layer/silver/etl/ /app/data_layer/silver/etl/
 COPY data_layer/silver/database/init.sql /app/data_layer/silver/database/init.sql
+COPY data_layer/gold/etl/ /app/data_layer/gold/etl/
 
 # Criar diretórios necessários
 RUN mkdir -p /app/data_layer/silver/data
@@ -39,6 +40,7 @@ COPY --from=builder /app/.venv/ /app/.venv/
 # Copiar arquivos fonte do builder
 COPY --from=builder /app/data_layer/bronze/ /app/data_layer/bronze/
 COPY --from=builder /app/data_layer/silver/ /app/data_layer/silver/
+COPY --from=builder /app/data_layer/gold/ /app/data_layer/gold/
 
 # Instalar dependências do sistema para PostgreSQL
 RUN apt-get update && \

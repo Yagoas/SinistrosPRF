@@ -63,40 +63,72 @@ def test_postgres_connection(max_retries: int = 30, retry_delay: int = 2) -> boo
 
 def run_etl_pipeline() -> int:
     """
-    Executa o pipeline ETL
+    Executa os pipelines ETL Silver e Gold
     """
     print_step("Executando Pipeline ETL...", "🔄")
 
     # Configurar PYTHONPATH
     pythonpath = os.environ.get("PYTHONPATH", "")
-    os.environ["PYTHONPATH"] = f"/app:{pythonpath}"
 
-    # Caminho do script pipeline
-    pipeline_script = Path("/app/data_layer/silver/etl/jobs/pipeline.py")
+    # PIPELINE SILVER (Bronze → Silver)
+    print_step("Pipeline Silver: Bronze → Silver", "📊")
+    os.environ["PYTHONPATH"] = f"/app/data_layer/silver:{pythonpath}"
 
-    if not pipeline_script.exists():
-        print_step(f"Script pipeline não encontrado: {pipeline_script}", "❌")
+    pipeline_silver_script = Path("/app/data_layer/silver/etl/jobs/pipeline.py")
+
+    if not pipeline_silver_script.exists():
+        print_step(
+            f"Script pipeline Silver não encontrado: {pipeline_silver_script}", "❌"
+        )
         return 1
 
-    # Executar pipeline
     try:
         result = subprocess.run(
-            [sys.executable, str(pipeline_script)],
-            cwd=str(pipeline_script.parent),
+            [sys.executable, str(pipeline_silver_script)],
+            cwd=str(pipeline_silver_script.parent),
+            env=os.environ.copy(),
+            capture_output=False,
+            text=True,
+        )
+
+        if result.returncode != 0:
+            print_step(f"Pipeline Silver falhou com código: {result.returncode}", "❌")
+            return result.returncode
+
+        print_step("Pipeline Silver concluído com sucesso!", "✅")
+
+    except Exception as e:
+        print_step(f"Erro ao executar pipeline Silver: {e}", "❌")
+        return 1
+
+    # PIPELINE GOLD (Silver → Gold)
+    print_step("Pipeline Gold: Silver → Gold (Data Warehouse)", "🏆")
+    os.environ["PYTHONPATH"] = f"/app/data_layer/gold:{pythonpath}"
+
+    pipeline_gold_script = Path("/app/data_layer/gold/etl/jobs/pipeline.py")
+
+    if not pipeline_gold_script.exists():
+        print_step(f"Script pipeline Gold não encontrado: {pipeline_gold_script}", "❌")
+        return 1
+
+    try:
+        result = subprocess.run(
+            [sys.executable, str(pipeline_gold_script)],
+            cwd=str(pipeline_gold_script.parent),
             env=os.environ.copy(),
             capture_output=False,
             text=True,
         )
 
         if result.returncode == 0:
-            print_step("Pipeline ETL concluído com sucesso!", "🎉")
+            print_step("Pipeline Gold concluído com sucesso!", "✅")
             return 0
         else:
-            print_step(f"Pipeline ETL falhou com código: {result.returncode}", "❌")
+            print_step(f"Pipeline Gold falhou com código: {result.returncode}", "❌")
             return result.returncode
 
     except Exception as e:
-        print_step(f"Erro ao executar pipeline: {e}", "❌")
+        print_step(f"Erro ao executar pipeline Gold: {e}", "❌")
         return 1
 
 
