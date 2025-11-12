@@ -69,10 +69,10 @@ def run_etl_pipeline() -> int:
 
     # Configurar PYTHONPATH
     pythonpath = os.environ.get("PYTHONPATH", "")
-    os.environ["PYTHONPATH"] = f"/usr/src:{pythonpath}"
+    os.environ["PYTHONPATH"] = f"/app:{pythonpath}"
 
     # Caminho do script pipeline
-    pipeline_script = Path("/usr/src/data_layer/silver/etl/jobs/pipeline.py")
+    pipeline_script = Path("/app/data_layer/silver/etl/jobs/pipeline.py")
 
     if not pipeline_script.exists():
         print_step(f"Script pipeline não encontrado: {pipeline_script}", "❌")

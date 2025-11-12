@@ -35,16 +35,18 @@ check: ## Verificar se Docker está rodando
 	@echo "Docker está rodando"
 
 setup: check ## Setup completo - primeira execução
-	@echo "SETUP COMPLETO - PRIMEIRA VEZ"
+	@echo "SETUP COMPLETO"
 	@echo "================================="
 	@echo "1. Limpando containers antigos..."
-	-@docker compose -f $(COMPOSE) down -v 2>/dev/null || docker compose -f $(COMPOSE) down -v 2>nul || true
+	-@docker stop sinistros_postgres sinistros_pgadmin sinistros_etl_setup 2>nul
+	-@docker rm sinistros_postgres sinistros_pgadmin sinistros_etl_setup 2>nul
+	-@docker compose -f $(COMPOSE) down -v 2>nul
 	@echo "2. Construindo imagens..."
 	@docker compose -f $(COMPOSE) build
 	@echo "3. Iniciando PostgreSQL + pgAdmin..."
 	@docker compose -f $(COMPOSE) up -d postgres pgadmin
 	@echo "4. Aguardando PostgreSQL ficar pronto..."
-	
+	@timeout /t 10 /nobreak >nul
 	@echo "5. Executando ETL dos dados para o lakehouse..."
 	@docker compose -f $(COMPOSE) --profile setup up etl_setup
 	@echo ""
@@ -98,13 +100,15 @@ clean: ## Limpeza completa (REMOVE TODOS OS DADOS!)
 	@echo "=================="
 	@echo "ATENÇÃO: Isso vai deletar TODOS os dados!"
 	@echo "Removendo containers, volumes e imagens..."
-	-@docker compose -f $(COMPOSE) down -v 2>/dev/null || docker compose -f $(COMPOSE) down -v 2>nul || true
-	-@docker container rm sinistros_etl_setup 2>/dev/null || docker container rm sinistros_etl_setup 2>nul || true
-	-@docker volume rm sinistros_postgres_data 2>/dev/null || docker volume rm sinistros_postgres_data 2>nul || true
-	-@docker volume rm sinistros_pgadmin_data 2>/dev/null || docker volume rm sinistros_pgadmin_data 2>nul || true
-	-@docker volume rm sinistros_etl_logs 2>/dev/null || docker volume rm sinistros_etl_logs 2>nul || true
-	-@docker volume rm sinistros_etl_data 2>/dev/null || docker volume rm sinistros_etl_data 2>nul || true
-	-@docker image rm sdb2-projeto-etl_setup 2>/dev/null || docker image rm sdb2-projeto-etl_setup 2>nul || true
+	-@docker stop sinistros_postgres sinistros_pgadmin sinistros_etl_setup 2>nul
+	-@docker rm sinistros_postgres sinistros_pgadmin sinistros_etl_setup 2>nul
+	-@docker compose -f $(COMPOSE) down -v 2>nul
+	-@docker volume rm sinistros_postgres_data 2>nul
+	-@docker volume rm sinistros_pgadmin_data 2>nul
+	-@docker volume rm sinistros_etl_logs 2>nul
+	-@docker volume rm sinistros_etl_data 2>nul
+	-@docker image rm sinistrosprf-etl_setup 2>nul
+	-@docker image rm sdb2-projeto-etl_setup 2>nul
 	@echo "Limpeza concluída!"
 	
 

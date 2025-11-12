@@ -3,16 +3,16 @@
 FROM python:3.12.3 AS builder
 
 # Criar ambiente virtual
-RUN python -m venv /usr/src/.venv
+RUN python -m venv /app/.venv
 
 # Definir diretório de trabalho
-WORKDIR /usr/src
+WORKDIR /app
 
 # Configurar PATH para usar o venv
-ENV PATH="/usr/src/.venv/bin:$PATH"
+ENV PATH="/app/.venv/bin:$PATH"
 
 # # Copiar requirements
-COPY requirements.txt /usr/src/
+COPY requirements.txt /app/
 
 # Instalar dependências
 RUN pip install --upgrade pip
@@ -20,25 +20,25 @@ RUN pip install -r requirements.txt
 
 
 # Copiar código fonte
-COPY data_layer/bronze/ /usr/src/data_layer/bronze/
-COPY data_layer/silver/etl/ /usr/src/data_layer/silver/etl/
-COPY data_layer/silver/database/init.sql /usr/src/data_layer/silver/database/init.sql
+COPY data_layer/bronze/ /app/data_layer/bronze/
+COPY data_layer/silver/etl/ /app/data_layer/silver/etl/
+COPY data_layer/silver/database/init.sql /app/data_layer/silver/database/init.sql
 
 # Criar diretórios necessários
-RUN mkdir -p /usr/src/data_layer/silver/data
+RUN mkdir -p /app/data_layer/silver/data
 
 # Definir PYTHONPATH
-ENV PYTHONPATH=/usr/src/data_layer/silver
+ENV PYTHONPATH=/app/data_layer/silver
 
 # runtime
 FROM python:3.12.3-slim AS runtime
 
 # Copiar ambiente virtual do builder
-COPY --from=builder /usr/src/.venv/ /usr/src/.venv/
+COPY --from=builder /app/.venv/ /app/.venv/
 
 # Copiar arquivos fonte do builder
-COPY --from=builder /usr/src/data_layer/bronze/ /usr/src/data_layer/bronze/
-COPY --from=builder /usr/src/data_layer/silver/ /usr/src/data_layer/silver/
+COPY --from=builder /app/data_layer/bronze/ /app/data_layer/bronze/
+COPY --from=builder /app/data_layer/silver/ /app/data_layer/silver/
 
 # Instalar dependências do sistema para PostgreSQL
 RUN apt-get update && \
@@ -47,19 +47,19 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Configurar ambiente
-ENV PATH=/usr/src/.venv/bin:$PATH \
+ENV PATH=/app/.venv/bin:$PATH \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PYTHONPATH=/usr/src/data_layer/silver
+    PYTHONPATH=/app/data_layer/silver
 
 WORKDIR /project
 
 # Copiar script de entrada Python
-COPY docker_entrypoint.py /usr/src/entrypoint.py
-RUN chmod +x /usr/src/entrypoint.py
+COPY docker_entrypoint.py /app/entrypoint.py
+RUN chmod +x /app/entrypoint.py
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import sys; sys.exit(0)"
 
 # Usar Python como entrypoint
-ENTRYPOINT ["python", "/usr/src/entrypoint.py"]
+ENTRYPOINT ["python", "/app/entrypoint.py"]

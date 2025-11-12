@@ -12,9 +12,9 @@ import warnings
 sys.path.append(str(Path(__file__).parent.parent))
 
 from utils import get_etl_logger, ProcessTimer, ETLStats, db_manager
-from silver.etl.jobs.extract import DataSourceExtractor
-from silver.etl.jobs.transform import SilverDataTransformer
-from silver.etl.jobs.load import SilverLakehouseLoader
+from etl.jobs.extract import DataSourceExtractor
+from etl.jobs.transform import SilverDataTransformer
+from etl.jobs.load import SilverLakehouseLoader
 
 warnings.filterwarnings("ignore")
 
