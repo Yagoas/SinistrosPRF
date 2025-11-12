@@ -14,6 +14,11 @@ class DatabaseManagerGold:
         self.schema_default = "gold"
         self._engine = None
 
+    @property
+    def engine(self):
+        """Property para acesso ao engine SQLAlchemy"""
+        return self.get_engine()
+
     def get_engine(self):
         if self._engine is None:
             conn_str = (
