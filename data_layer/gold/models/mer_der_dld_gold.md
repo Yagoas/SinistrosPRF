@@ -1,11 +1,5 @@
-# DIAGRAMA ENTIDADE-RELACIONAMENTO (DER)
 
-O Diagrama Entidade-Relacionamento (DER) é uma representação gráfica do modelo de dados em nível conceitual. Foca em entidades e seus atributos, sem detalhar aspectos de implementação física (tipos de dados, índices, PK/FK físicas).
-
-## DER conceitual do projeto (Camada Gold)
-
-![DER da camada Gold](../../../assets/der_gold.jpg)
-
+# Modelo Entidade-Relacionamento
 ---
 
 ## ENTIDADES
@@ -110,3 +104,11 @@ O Diagrama Entidade-Relacionamento (DER) é uma representação gráfica do mode
 
 - **Cardinalidade**: 1:N
 - Um `FATO_SINISTRO` pode possuir múltiplos `DIM_ENVOLVIDO`, mas um `DIM_ENVOLVIDO` pode estar em posse de apenas um `FATO_SINISTRO`.
+
+# DIAGRAMA ENTIDADE-RELACIONAMENTO (DER)
+
+![DER da camada Gold](../../../assets/der_gold.jpg)
+
+# Diagrama Lógico de Dados (DLD)
+
+![DER da camada Gold](../../../assets/dld_gold.jpg)
