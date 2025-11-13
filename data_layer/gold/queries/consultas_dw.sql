@@ -43,6 +43,8 @@ ORDER BY total_sinistros DESC;
 
 SELECT 
     d.ano,
+    EXTRACT(MONTH FROM d.data) AS mes,
+    EXTRACT(DAY FROM d.data) AS dia,
     d.hora,
     d.dia_semana,
     COUNT(DISTINCT f.sinistro_id) as total_sinistros,
@@ -52,8 +54,8 @@ SELECT
 FROM dw.fato_sinistros f
 INNER JOIN dw.dim_data d ON f.data_id = d.data_id
 INNER JOIN dw.dim_tipo t ON f.tipo_id = t.tipo_id
-GROUP BY d.ano, d.hora, d.dia_semana
-ORDER BY d.ano, d.hora;
+GROUP BY d.ano, EXTRACT(MONTH FROM d.data), EXTRACT(DAY FROM d.data), d.hora, d.dia_semana
+ORDER BY d.ano, EXTRACT(MONTH FROM d.data), EXTRACT(DAY FROM d.data), d.hora;
 
 
 -- ================================================================================
