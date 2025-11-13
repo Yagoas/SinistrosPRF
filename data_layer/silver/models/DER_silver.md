@@ -4,7 +4,7 @@ O Diagrama Entidade-Relacionamento (DER) é uma representação gráfica do mode
 
 ### DER conceitual do projeto (Camada Silver)
 
-![DER da camada Silver](../../assets/der.jpeg)
+![DER da camada Silver](../../../assets/der.jpeg)
 
 - **Entidade**: TB_SINISTROS_SILVER
 - **Identificadores de negócio (conceituais)**: `sinistroId`, `idEnvolvido`, `veiculoId`

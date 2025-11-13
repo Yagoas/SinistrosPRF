@@ -4,7 +4,7 @@ O Diagrama Lógico de Dados descreve a estrutura lógica do banco: tabelas, colu
 
 ### DLD do projeto (Camada Silver)
 
-![DLD da camada Silver](../../assets/dld.jpeg)
+![DLD da camada Silver](../../../assets/dld.jpeg)
 
 Observação: o DLD reflete a estrutura lógica consumida na camada Silver (tabela única). Normalizações adicionais podem ser aplicadas em modelos lógico/dimensionais específicos para BI, quando necessário.
 
