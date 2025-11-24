@@ -1,67 +1,18 @@
-# Imagem base Python
-# builder
-FROM python:3.12.3 AS builder
+# Imagem base do PostgreSQL
+FROM postgres:15-alpine
 
-# Criar ambiente virtual
-RUN python -m venv /app/.venv
+# Informações do maintainer
+LABEL maintainer="SinistrosPRF"
+LABEL description="Banco de dados PostgreSQL para análise de sinistros PRF"
 
-# Definir diretório de trabalho
-WORKDIR /app
+# Variáveis de ambiente padrão
+ENV POSTGRES_DB=sinistros_prf
+ENV POSTGRES_USER=prf_user
+ENV POSTGRES_PASSWORD=prf_pass
 
-# Configurar PATH para usar o venv
-ENV PATH="/app/.venv/bin:$PATH"
+# Copiar scripts DDL para o diretório de init do PostgreSQL
+COPY data_layer/silver/ddl.sql /docker-entrypoint-initdb.d/01_silver_ddl.sql
+COPY data_layer/gold/ddl.sql /docker-entrypoint-initdb.d/02_gold_ddl.sql
 
-# # Copiar requirements
-COPY requirements.txt /app/
-
-# Instalar dependências
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
-
-
-# Copiar código fonte
-COPY data_layer/bronze/ /app/data_layer/bronze/
-COPY data_layer/silver/etl/ /app/data_layer/silver/etl/
-COPY data_layer/silver/database/init.sql /app/data_layer/silver/database/init.sql
-COPY data_layer/gold/etl/ /app/data_layer/gold/etl/
-
-# Criar diretórios necessários
-RUN mkdir -p /app/data_layer/silver/data
-
-# Definir PYTHONPATH
-ENV PYTHONPATH=/app/data_layer/silver
-
-# runtime
-FROM python:3.12.3-slim AS runtime
-
-# Copiar ambiente virtual do builder
-COPY --from=builder /app/.venv/ /app/.venv/
-
-# Copiar arquivos fonte do builder
-COPY --from=builder /app/data_layer/bronze/ /app/data_layer/bronze/
-COPY --from=builder /app/data_layer/silver/ /app/data_layer/silver/
-COPY --from=builder /app/data_layer/gold/ /app/data_layer/gold/
-
-# Instalar dependências do sistema para PostgreSQL
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Configurar ambiente
-ENV PATH=/app/.venv/bin:$PATH \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PYTHONPATH=/app/data_layer/silver
-
-WORKDIR /project
-
-# Copiar script de entrada Python
-COPY docker_entrypoint.py /app/entrypoint.py
-RUN chmod +x /app/entrypoint.py
-
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import sys; sys.exit(0)"
-
-# Usar Python como entrypoint
-ENTRYPOINT ["python", "/app/entrypoint.py"]
+# Expor porta padrão do PostgreSQL
+EXPOSE 5432

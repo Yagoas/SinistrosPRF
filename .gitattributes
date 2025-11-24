@@ -1,3 +1,2 @@
-silver/etl/data/*.csv filter=lfs diff=lfs merge=lfs -text
-bronze/data/*.csv filter=lfs diff=lfs merge=lfs -text
+data_layer/raw/*.csv filter=lfs diff=lfs merge=lfs -text
 assets/mapa_sinistros.html filter=lfs diff=lfs merge=lfs -text

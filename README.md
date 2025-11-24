@@ -10,6 +10,7 @@
 ![PowerBI](https://img.shields.io/badge/powerbi-visualization-yellow.svg)
 ![Jupyter](https://img.shields.io/badge/jupyter-notebook-orange.svg)
 ![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow.svg)
+
 <!-- ![Status](https://img.shields.io/badge/status-concluido-green.svg) -->
 
 ## 📋 Sobre o Projeto
@@ -26,26 +27,64 @@ Como resultado, temos:
 - Dashboard no Power BI: Em construção
   <!-- ![Dashboard Power BI](../assets/dashboard_powerbi) -->
 
-
 ## 🏗️ Arquitetura do Projeto
 
 O projeto segue a **arquitetura Medallion** com três camadas principais:
 
-### 🥉 **Bronze Layer (Raw Data)**
-- Dados brutos da PRF sem processamento
-- Armazenamento em arquivos CSV originais
-- Preservação da estrutura e formato original
+```
+SinistrosPRF/
+├── data_layer/
+│   ├── raw/                                      # 🥉 Camada Bronze - Dados Brutos
+│   │   ├── analytics.ipynb                       # Análise exploratória dos dados brutos
+│   │   ├── acidentes2024_todas_causas_tipos.csv  # Dados de 2024
+│   │   ├── acidentes2025_todas_causas_tipos.csv  # Dados de 2025
+│   │   └── dicionario_de_dados.md                # Dicionário de dados da camada raw
+│   │
+│   ├── silver/                                   # 🥈 Camada Silver - Dados Tratados
+│   │   ├── analytics.ipynb                       # Análises da camada silver
+│   │   ├── ddl.sql                               # DDL do banco de dados Silver
+│   │   └── mer_der_dld.md                        # Modelagem Silver (MER/DER/DLD)
+│   │
+│   └── gold/                                     # 🥇 Camada Gold - Data Warehouse
+│       ├── consultas.sql                         # Consultas analíticas
+│       ├── ddl.sql                               # DDL do Data Warehouse (Star Schema)
+│       ├── mapa.ipynb                            # Visualizações geográficas
+│       └── mer_der_dld.md                        # Modelagem Gold (Star Schema)
+│       ├── mer_der_dld.md                        # Modelagem Gold (MER/DER/DLD)
+│       ├── mnemonico.pdf                         # Mnemônicos do modelo dimensional
+│       └── mapa.ipynb                            # Visualizações e mapas interativos
+│
+├── transformer/
+│   ├── etl_raw_to_silver.ipynb                   # ETL: Raw → Silver
+│   └── etl_silver_to_gold.ipynb                  # ETL: Silver → Gold
+│
+├── assets/                                       # Arquivos estáticos (mapas HTML, etc.)
+├── docker-compose.yml                            # Configuração Docker (PostgreSQL)
+├── Dockerfile                                    # Imagem Docker para o ambiente
+├── init_db.sql                                   # 🔧 Inicialização do banco (schemas Silver e Gold)
+├── requirements.txt                              # Dependências Python
+└── README.md
+```
 
-### 🥈 **Silver Layer (Lakehouse)**
-- Dados limpos e estruturados
+### 🥉 **Raw Layer (Dados Brutos)**
+
+- Dados originais da PRF sem processamento
+- 2 arquivos CSV com ~980k registros (2024-2025)
+- Dicionário de dados e análise exploratória inicial
+
+### 🥈 **Silver Layer (Dados Tratados)**
+
+- Dados limpos e normalizados
 - **PostgreSQL containerizado** como banco de dados
-- **Jobs ETL automatizados** para ingestão e transformação
-- Modelagem relacional com MER, DER, DLD e DDL
+- Modelagem relacional documentada (MER, DER, DLD)
+- ETL automatizado via notebooks Jupyter
 
 ### 🥇 **Gold Layer (Data Warehouse)**
+
 - **Modelo Star Schema** para análise dimensional
-- Documentação completa (MER, DER, DLD, DDL)
-- Dados agregados e prontos para visualização
+- Tabelas fato e dimensões otimizadas
+- Consultas analíticas pré-definidas
+- Visualizações e dashboards
 
 ## 🎯 Objetivos
 
@@ -66,88 +105,47 @@ O projeto utiliza os dados oficiais de **sinistros rodoviários** disponibilizad
 
 ### 📁 Estrutura do Projeto
 
-```
-📦 SDB2 - Projeto/
-├── 📂 assets/                    # Repositório auxiliar
-├── 📂 bronze/                    # Camada Bronze (Raw Data)
-│   ├── data/
-│   │   ├── acidentes2024_todas_causas_tipos.csv
-│   │   └── acidentes2025_todas_causas_tipos.csv
-│   └── README.md
-├── 📂 silver/                    # Camada Silver (Lakehouse)
-│   ├── database/
-│   │   ├── init.sql
-│   ├── etl/
-│   │   ├── data/
-│   │   │   └── acidentes2024_todas_causas_tipos.csv
-│   │   ├── jobs/
-│   │   │   ├── extract.py
-│   │   │   ├── load.py
-│   │   │   ├── pipeline.py
-│   │   │   └── transform.py
-│   │   ├── scripts/
-│   │   └── utils/
-│   │       ├── _init_.py
-│   │       ├── database.py
-│   │       └── logging_utils.py
-│   ├── models/
-│   │   ├── MER/
-│   │   ├── DER/
-│   │   ├── DLD/
-│   │   └── DDL/
-│   └── README.md
-├── 📂 gold/                      # Camada Gold (Data Warehouse)
-│   ├── data/
-│   ├── models/
-│   └── README.md
-├── 📂 visualization/             # Visualizações
-│   ├── powerbi/
-│   │   └── dashboard_sinistros.pbix
-│   └── reports/
-├── 📂 notebooks/                 # Análises exploratórias
-│   └── analise_raw.ipynb
-│   └── tratamento_raw.ipynb
-│   └── mapa.ipynb
-├── 📄 .gitattributes
-├── 📄 .gitignore
-├── 📄 compose.yml
-├── 📄 docker_entrypoint.sh
-├── 📄 Dockerfile
-├── 📄 Makefile
-└── 📄 README.md
-```
+Veja a estrutura completa na seção [🏗️ Arquitetura do Projeto](#-arquitetura-do-projeto) acima.
 
 ## 🛠️ Tecnologias Utilizadas
 
 ### **Linguagem & Ambiente**
+
 - **Python 3.11+** - Linguagem principal
-- **Jupyter Notebook** - Ambiente de desenvolvimento interativo
+- **Jupyter Notebook** - Ambiente de desenvolvimento interativo e execução de ETLs
 - **Visual Studio Code** - IDE principal com extensões para Jupyter
 
-### **Camada Bronze**
-- **CSV Files** - Armazenamento de dados brutos
+### **Infraestrutura**
 
-### **Camada Silver (Lakehouse)**
-- **PostgreSQL** - Banco de dados relacional
-- **Docker & Docker Compose** - Containerização
-- **Makefile** - Automação de tarefas
+- **PostgreSQL 15** - Banco de dados relacional (schemas Silver e Gold)
+- **Docker & Docker Compose** - Containerização do banco de dados
+- **SQLAlchemy 2.0** - ORM e engine para PostgreSQL
 - **Psycopg2** - Driver PostgreSQL para Python
-- **SQLAlchemy** - ORM para PostgreSQL
-- **Pandas** - Manipulação e análise de dados
 
-### **Camada Gold (Data Warehouse)**
-- **Star Schema** - Modelagem dimensional
-- **CSV Export** - Formato de saída otimizado
+### **Pipeline ETL**
+
+- **Pandas 2.3+** - Manipulação e transformação de dados
+- **NumPy** - Operações numéricas e tratamento de arrays
+- **Python-dotenv** - Gerenciamento de variáveis de ambiente
+
+### **Modelagem de Dados**
+
+- **Camada Raw**: Arquivos CSV (~980k registros)
+- **Camada Silver**: PostgreSQL - Dados normalizados e limpos
+- **Camada Gold**: PostgreSQL - Star Schema (6 dimensões + 1 fato)
 
 ### **Visualização & Análise**
-- **Power BI** - Dashboards e relatórios
-- **Pandas** - Manipulação e análise de dados
+
+- **Matplotlib & Seaborn** - Gráficos e visualizações estatísticas
+- **Folium** - Mapas interativos georreferenciados
+- **Power BI** - Dashboards e relatórios executivos (em desenvolvimento)
 - **NumPy** - Operações numéricas
 - **Matplotlib & Seaborn** - Visualização estatística
 - **TQDM** - Barra de progresso para scripts
 - **Folium & Branca** - Mapas interativos
 
 ### **Modelagem de Dados**
+
 ```python
 ├── PostgreSQL      # Banco relacional (Silver)
 ├── Star Schema     # Modelagem dimensional (Gold)
@@ -155,33 +153,77 @@ O projeto utiliza os dados oficiais de **sinistros rodoviários** disponibilizad
 └── DDL Scripts     # Scripts de criação
 ```
 
-## 🚀 Como Executar
+## Como Executar
+
+### Pré-requisitos
+
+- Docker e Docker Compose instalados
+- Python 3.11+ instalado
+- Jupyter Notebook/Lab ou VS Code com extensão Python
+
+### Passos Rápidos
 
 1. **Clone o repositório**
+
 ```bash
 git clone https://github.com/Yagoas/SinistrosPRF.git
-cd SDB2-Projeto
+cd SinistrosPRF
 ```
 
-2. **Configure o ambiente Silver e Roda jobs ETL** (PostgreSQL + Docker)
+2. **Suba o banco de dados PostgreSQL**
+
 ```bash
-make setup
+docker-compose up -d --build
 ```
 
-4. **Gere a camada Gold** com modelo Star Schema
+Isso irá:
 
-5. **Conecte o Power BI** aos dados da Gold Layer
+- Construir a imagem Docker customizada (PostgreSQL + init_db.sql)
+- Subir o container na porta 5432
+- Executar automaticamente o init_db.sql
+- Criar schemas `silver` e `gold` com todas as tabelas
 
-6. **Visualize os dashboards** e extraia insights
+3. **Instale as dependências Python**
 
-## 📈 Resultados Esperados
+```bash
+pip install -r requirements.txt
+```
 
-- **Data Pipeline automatizado** da Bronze à Gold
-- **Banco de dados normalizado** na Silver Layer
-- **Data Warehouse dimensional** na Gold Layer
-- **Dashboards interativos** no Power BI
-- **Documentação técnica completa** de todos os modelos
-- **Insights** sobre **segurança viária**
+4. **Execute os notebooks ETL na ordem**
+- `transformer/etl_raw_to_silver.ipynb` - Carrega CSVs e popula schema Silver (~980k registros)
+- `transformer/etl_silver_to_gold.ipynb` - Cria Star Schema na Gold Layer (6 dims + 1 fato)
+
+5. **Explore os dados**
+
+- `data_layer/raw/analytics.ipynb` - Análise exploratória dos dados brutos
+- `data_layer/silver/analytics.ipynb` - Análise dos dados normalizados
+- `data_layer/gold/mapa.ipynb` - Visualizações geográficas interativas
+- `data_layer/gold/consultas.sql` - Queries analíticas prontas
+
+
+## 📊 Fluxo de Dados
+
+```
+Dados PRF (CSV 2024 + 2025)
+      ↓
+┌─────────────────────────┐
+│      Raw Layer          │ ← Dados brutos (~980k registros)
+│  analytics.ipynb        │
+└─────────────────────────┘
+      ↓ ETL (etl_raw_to_silver.ipynb)
+┌─────────────────────────┐
+│      Silver Layer       │ ← PostgreSQL - Dados limpos e normalizados
+│  analytics.ipynb        │    (tb_sinistros_silver)
+└─────────────────────────┘
+      ↓ ETL (etl_silver_to_gold.ipynb)
+┌─────────────────────────┐
+│      Gold Layer         │ ← PostgreSQL - Star Schema
+│  mapa.ipynb             │    (6 dimensões + fato_sinistro)
+│  visualizações          │
+└─────────────────────────┘
+      ↓
+  Power BI / Mapas
+```
 
 ## 👥 Equipe
 
@@ -189,6 +231,7 @@ make setup
 **Instituição**: Universidade de Brasília (UnB)  
 **Período**: 2º Semestre de 2025  
 **Integrantes**:
+
 <div align="center">
 <table>
   <tr>
@@ -221,4 +264,5 @@ make setup
 </div>
 
 ## 📝 Licença
+
 Este projeto foi desenvolvido para fins acadêmicos na UnB e sua replicação deve ser devidamente referenciada.

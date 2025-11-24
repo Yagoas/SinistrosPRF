@@ -1,0 +1,19 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Jupyter
+*.ipynb
+
+# Data files
+data_layer/
+transformer/
+assets/
+
+# Documentation
+README.md
+*.md
+
+# Docker
+docker-compose.yml
