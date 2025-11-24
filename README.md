@@ -34,18 +34,18 @@ O projeto segue a **arquitetura Medallion** com três camadas principais:
 ```
 SinistrosPRF/
 ├── data_layer/
-│   ├── raw/                                      # 🥉 Camada Bronze - Dados Brutos
+│   ├── raw/                                      # Camada Bronze - Dados Brutos
 │   │   ├── analytics.ipynb                       # Análise exploratória dos dados brutos
 │   │   ├── acidentes2024_todas_causas_tipos.csv  # Dados de 2024
 │   │   ├── acidentes2025_todas_causas_tipos.csv  # Dados de 2025
 │   │   └── dicionario_de_dados.md                # Dicionário de dados da camada raw
 │   │
-│   ├── silver/                                   # 🥈 Camada Silver - Dados Tratados
+│   ├── silver/                                   # Camada Silver - Dados Tratados
 │   │   ├── analytics.ipynb                       # Análises da camada silver
 │   │   ├── ddl.sql                               # DDL do banco de dados Silver
 │   │   └── mer_der_dld.md                        # Modelagem Silver (MER/DER/DLD)
 │   │
-│   └── gold/                                     # 🥇 Camada Gold - Data Warehouse
+│   └── gold/                                     # Camada Gold - Data Warehouse
 │       ├── consultas.sql                         # Consultas analíticas
 │       ├── ddl.sql                               # DDL do Data Warehouse (Star Schema)
 │       ├── mapa.ipynb                            # Visualizações geográficas
@@ -61,7 +61,6 @@ SinistrosPRF/
 ├── assets/                                       # Arquivos estáticos (mapas HTML, etc.)
 ├── docker-compose.yml                            # Configuração Docker (PostgreSQL)
 ├── Dockerfile                                    # Imagem Docker para o ambiente
-├── init_db.sql                                   # 🔧 Inicialização do banco (schemas Silver e Gold)
 ├── requirements.txt                              # Dependências Python
 └── README.md
 ```
@@ -181,7 +180,7 @@ Isso irá:
 - Construir a imagem Docker customizada (PostgreSQL + init_db.sql)
 - Subir o container na porta 5432
 - Executar automaticamente o init_db.sql
-- Criar schemas `silver` e `gold` com todas as tabelas
+- Criar schemas `dl` e `dw` com todas as tabelas
 
 3. **Instale as dependências Python**
 
