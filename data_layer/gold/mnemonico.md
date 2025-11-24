@@ -47,18 +47,18 @@ Armazena informações geográficas dos sinistros.
 
 ---
 
-### dim_sinistro - Dimensão Sinistro
+### dim_categorizacao - Dimensão Categorização
 
 Armazena características e classificações dos sinistros.
 
-| Mnemônico | Significado              |
-| --------- | ------------------------ |
-| `srk_sns` | Sinistro Surrogate Key   |
-| `sns_tip` | Sinistro Tipo            |
-| `sns_cau` | Sinistro Causa           |
-| `sns_cap` | Sinistro Causa Principal |
-| `sns_ord` | Sinistro Ordem Tipo      |
-| `sns_grv` | Sinistro Gravidade       |
+| Mnemônico | Significado                 |
+| --------- | --------------------------- |
+| `srk_cat` | Categorização Surrogate Key |
+| `cla_tip` | Sinistro Tipo               |
+| `cla_cau` | Sinistro Causa              |
+| `cla_cap` | Sinistro Causa Principal    |
+| `cla_ord` | Sinistro Ordem Tipo         |
+| `cla_grv` | Sinistro Gravidade          |
 
 ---
 
@@ -113,17 +113,17 @@ Armazena informações sobre veículos envolvidos nos sinistros.
 
 Tabela central que armazena métricas e relacionamentos com as dimensões.
 
-| Mnemônico | Significado               |
-| --------- | ------------------------- |
-| `sns_id`  | Sinistro Identificador    |
-| `srk_tmp` | Temporal Surrogate Key    |
-| `srk_loc` | Localização Surrogate Key |
-| `srk_sns` | Sinistro Surrogate Key    |
-| `srk_via` | Via Surrogate Key         |
-| `srk_pes` | Pessoa Surrogate Key      |
-| `srk_vei` | Veículo Surrogate Key     |
-| `fat_ils` | Fato Ilesos               |
-| `fat_fle` | Fato Feridos Leves        |
-| `fat_fgr` | Fato Feridos Graves       |
-| `fat_fer` | Fato Feridos              |
-| `fat_mrt` | Fato Mortos               |
+| Mnemônico | Significado                 |
+| --------- | --------------------------- |
+| `srk_sns` | Sinistro Identificador      |
+| `srk_tmp` | Temporal Surrogate Key      |
+| `srk_loc` | Localização Surrogate Key   |
+| `srk_cat` | Categorização Surrogate Key |
+| `srk_via` | Via Surrogate Key           |
+| `srk_pes` | Pessoa Surrogate Key        |
+| `srk_vei` | Veículo Surrogate Key       |
+| `fat_ils` | Fato Ilesos                 |
+| `fat_fle` | Fato Feridos Leves          |
+| `fat_fgr` | Fato Feridos Graves         |
+| `fat_fer` | Fato Feridos                |
+| `fat_mrt` | Fato Mortos                 |

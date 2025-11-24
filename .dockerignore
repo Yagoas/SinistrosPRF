@@ -7,7 +7,9 @@
 *.ipynb
 
 # Data files
-data_layer/
+data_layer/*
+!data_layer/silver/ddl.sql
+!data_layer/gold/ddl.sql
 transformer/
 assets/
 

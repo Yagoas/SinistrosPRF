@@ -31,15 +31,15 @@ CREATE TABLE dw.dim_localizacao (
     loc_lng DECIMAL(12,10)
 );
 
--- Dimensão Sinistro
-DROP TABLE IF EXISTS dw.dim_sinistro CASCADE;
-CREATE TABLE dw.dim_sinistro (
-    srk_sns SERIAL PRIMARY KEY,
-    sns_tip VARCHAR(50),
-    sns_cau VARCHAR(100),
-    sns_cap VARCHAR(5),
-    sns_ord INTEGER,
-    sns_grv VARCHAR(20)
+-- Dimensão Classificação
+DROP TABLE IF EXISTS dw.dim_categorizacao CASCADE;
+CREATE TABLE dw.dim_categorizacao (
+    srk_cat SERIAL PRIMARY KEY,
+    cat_tip VARCHAR(50),
+    cat_cau VARCHAR(100),
+    cat_cap VARCHAR(5),
+    cat_ord INTEGER,
+    cat_grv VARCHAR(20)
 );
 
 -- Dimensão Via
@@ -78,10 +78,10 @@ CREATE TABLE dw.dim_veiculo (
 -- Tabela Fato Sinistros
 DROP TABLE IF EXISTS dw.fat_sinistro CASCADE;
 CREATE TABLE dw.fat_sinistro (
-    sns_id BIGINT NOT NULL,
+    srk_sns BIGINT NOT NULL,
     srk_tmp INTEGER REFERENCES dw.dim_temporal(srk_tmp),
     srk_loc INTEGER REFERENCES dw.dim_localizacao(srk_loc),
-    srk_sns INTEGER REFERENCES dw.dim_sinistro(srk_sns),
+    srk_cat INTEGER REFERENCES dw.dim_categorizacao(srk_cat),
     srk_via INTEGER REFERENCES dw.dim_via(srk_via),
     srk_pes INTEGER REFERENCES dw.dim_pessoa(srk_pes),
     srk_vei INTEGER REFERENCES dw.dim_veiculo(srk_vei),
@@ -100,7 +100,7 @@ CREATE INDEX idx_dim_localizacao_reg ON dw.dim_localizacao(loc_reg);
 -- Índices para performance na fato
 CREATE INDEX idx_fat_sinistro_tmp ON dw.fat_sinistro(srk_tmp);
 CREATE INDEX idx_fat_sinistro_loc ON dw.fat_sinistro(srk_loc);
-CREATE INDEX idx_fat_sinistro_sns ON dw.fat_sinistro(srk_sns);
+CREATE INDEX idx_fat_sinistro_cat ON dw.fat_sinistro(srk_cat);
 CREATE INDEX idx_fat_sinistro_via ON dw.fat_sinistro(srk_via);
 CREATE INDEX idx_fat_sinistro_pes ON dw.fat_sinistro(srk_pes);
 CREATE INDEX idx_fat_sinistro_vei ON dw.fat_sinistro(srk_vei);

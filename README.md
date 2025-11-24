@@ -100,7 +100,7 @@ O projeto utiliza os dados oficiais de **sinistros rodoviários** disponibilizad
 - **Período**: 2024-2025
 - **Registros**: Aproximadamente 980k registros e 120k sinistros
 - **Variáveis**: 37 colunas incluindo localização, horário, tipo de acidente, vítimas, condições meteorológicas, veículos envolvidos, etc.
-- **Referência**: <a ref="https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf"><b>Dados Abertos da PRF (Agrupados por pessoa - Todas as causas e tipos de acidentes)</b></a>. Acessado em: 13/09/2025
+- **Referência**: <a ref="https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf"><b>Dados Abertos da PRF (Agrupados por pessoa - Todas as causas e tipos de sinistros)</b></a>. Acessado em: 13/09/2025
 
 ### 📁 Estrutura do Projeto
 
@@ -189,6 +189,7 @@ pip install -r requirements.txt
 ```
 
 4. **Execute os notebooks ETL na ordem**
+
 - `transformer/etl_raw_to_silver.ipynb` - Carrega CSVs e popula schema Silver (~980k registros)
 - `transformer/etl_silver_to_gold.ipynb` - Cria Star Schema na Gold Layer (6 dims + 1 fato)
 
@@ -198,7 +199,6 @@ pip install -r requirements.txt
 - `data_layer/silver/analytics.ipynb` - Análise dos dados normalizados
 - `data_layer/gold/mapa.ipynb` - Visualizações geográficas interativas
 - `data_layer/gold/consultas.sql` - Queries analíticas prontas
-
 
 ## 📊 Fluxo de Dados
 
