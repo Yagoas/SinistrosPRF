@@ -2,15 +2,9 @@
 
 Este documento descreve os mnemônicos utilizados na modelagem dimensional da camada Gold (Data Warehouse).
 
-## 📋 Convenções
-
-- **SRK**: Surrogate Key (Chave Substituta) - Identificador único sequencial gerado automaticamente
-- **Formato SRK**: `srk_xxx` onde xxx é o prefixo da tabela
-- **Prefixo da Coluna**: 3 letras correspondentes ao atributo
-
 ---
 
-## 🗂️ Tabelas Dimensionais
+## Tabelas das Dimensões
 
 ### dim_temporal - Dimensão Temporal
 
@@ -54,12 +48,11 @@ Armazena características e classificações dos sinistros.
 | Mnemônico | Significado                 |
 | --------- | --------------------------- |
 | `srk_cat` | Categorização Surrogate Key |
-| `cla_tip` | Sinistro Tipo               |
-| `cla_cau` | Sinistro Causa              |
-| `cla_cap` | Sinistro Causa Principal    |
-| `cla_ord` | Sinistro Ordem Tipo         |
-| `cla_grv` | Sinistro Gravidade          |
-
+| `cat_tip` | Sinistro Tipo               |
+| `cat_cau` | Sinistro Causa              |
+| `cat_cap` | Sinistro Causa Principal    |
+| `cat_ord` | Sinistro Ordem Tipo         |
+| `cat_grv` | Sinistro Gravidade          |
 ---
 
 ### dim_via - Dimensão Via
@@ -107,7 +100,7 @@ Armazena informações sobre veículos envolvidos nos sinistros.
 
 ---
 
-## 📊 Tabela Fato
+## Tabela Fato
 
 ### fat_sinistro - Fato Sinistros
 
