@@ -9,9 +9,7 @@
 ![Docker](https://img.shields.io/badge/docker-containerized-blue.svg)
 ![PowerBI](https://img.shields.io/badge/powerbi-visualization-yellow.svg)
 ![Jupyter](https://img.shields.io/badge/jupyter-notebook-orange.svg)
-![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow.svg)
-
-<!-- ![Status](https://img.shields.io/badge/status-concluido-green.svg) -->
+[Status](https://img.shields.io/badge/status-concluido-green.svg)
 
 ## 📋 Sobre o Projeto
 
@@ -24,8 +22,9 @@ Para a análise, foram utilizados dados oficiais de sinistros rodoviários dispo
 Como resultado, temos:
 
 - [Mapa interativo dos sinistros do Centro-Oeste](https://yagoas.github.io/SinistrosPRF/assets/sinistros_centro_oeste.html) (O mapa completo está disponível em: /assets/mapa_sinistros.html)
-- Dashboard no Power BI: Em construção
-  <!-- ![Dashboard Power BI](../assets/dashboard_powerbi) -->
+- Dashboard no Power BI: [Dashboard Power BI](https://app.powerbi.com/view?r=eyJrIjoiZGQzYWU0MGUtNzM3Zi00Y2ZhLWJmMzUtODQ4MzU1YzYyYzU0IiwidCI6ImVjMzU5YmExLTYzMGItNGQyYi1iODMzLWM4ZTZkNDhmODA1OSJ9) ou no [repositório](assets/dashboard_powerbi)
+
+  <iframe title="Sinistros" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiZGQzYWU0MGUtNzM3Zi00Y2ZhLWJmMzUtODQ4MzU1YzYyYzU0IiwidCI6ImVjMzU5YmExLTYzMGItNGQyYi1iODMzLWM4ZTZkNDhmODA1OSJ9" frameborder="0" allowFullScreen="true"></iframe>
 
 ## 🏗️ Arquitetura do Projeto
 
