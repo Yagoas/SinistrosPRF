@@ -4,7 +4,7 @@ O Diagrama Entidade-Relacionamento (DER) é uma representação gráfica do mode
 
 ### DER conceitual do projeto (Camada Silver)
 
-![DER da camada Silver](../../../assets/der.jpeg)
+![DER da camada Silver](../../assets/der.jpeg)
 
 - **Entidade**: TB_SINISTROS_SILVER
 - **Identificadores de negócio (conceituais)**: `sinistroId`, `idEnvolvido`, `veiculoId`
@@ -19,7 +19,7 @@ O Diagrama Lógico de Dados descreve a estrutura lógica do banco: tabelas, colu
 
 ### DLD do projeto (Camada Silver)
 
-![DLD da camada Silver](../../../assets/dld.jpeg)
+![DLD da camada Silver](../../assets/dld.jpeg)
 
 Observação: o DLD reflete a estrutura lógica consumida na camada Silver (tabela única). Normalizações adicionais podem ser aplicadas em modelos lógico/dimensionais específicos para BI, quando necessário.
 

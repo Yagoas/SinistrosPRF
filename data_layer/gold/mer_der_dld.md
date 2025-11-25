@@ -107,8 +107,8 @@
 
 # DIAGRAMA ENTIDADE-RELACIONAMENTO (DER)
 
-![DER da camada Gold](../../../assets/der_gold.jpg)
+![DER da camada Gold](../../assets/der_gold.jpg)
 
 # Diagrama Lógico de Dados (DLD)
 
-![DER da camada Gold](../../../assets/dld_gold.jpg)
+![DER da camada Gold](../../assets/dld_gold.jpg)
