@@ -93,7 +93,6 @@ Armazena informações sobre veículos envolvidos nos sinistros.
 | Mnemônico | Significado            |
 | --------- | ---------------------- |
 | `srk_vei` | Veículo Surrogate Key  |
-| `vei_id`  | Veículo Identificador  |
 | `vei_tip` | Veículo Tipo           |
 | `vei_mrc` | Veículo Marca/Modelo   |
 | `vei_ano` | Veículo Ano Fabricação |

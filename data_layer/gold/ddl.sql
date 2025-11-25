@@ -69,7 +69,6 @@ CREATE TABLE dw.dim_pessoa (
 DROP TABLE IF EXISTS dw.dim_veiculo CASCADE;
 CREATE TABLE dw.dim_veiculo (
     srk_vei SERIAL PRIMARY KEY,
-    vei_id BIGINT,
     vei_tip VARCHAR(20),
     vei_mrc VARCHAR(50),
     vei_ano INTEGER
